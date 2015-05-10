@@ -27,3 +27,5 @@ L'application est déployée sur le cloud Heroku à cette adresse : [http://fra.
 * Découpage en client / projet
 * Authentification à l'aide de ticket
 * Gestion de droits utilisateurs
+* Ajout de la fonctionnalité de duplication
+* Ajout de la notion de version de service et de la possibilité de gérer plusieurs messages sur une même url pour les cas de tests, les cas d'erreur, ...
