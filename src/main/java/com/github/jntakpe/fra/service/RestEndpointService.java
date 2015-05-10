@@ -3,6 +3,7 @@ package com.github.jntakpe.fra.service;
 import com.github.jntakpe.fra.config.FakeRestApiConfig;
 import com.github.jntakpe.fra.domain.RestEndpoint;
 import com.github.jntakpe.fra.repository.RestEndpointRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +173,7 @@ public class RestEndpointService {
     private ResponseEntity<String> applyDelay(RestEndpoint endpoint) {
         try {
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            return new ResponseEntity<>(executorService.schedule(endpoint::getContent, endpoint.getDelay(),
+            return new ResponseEntity<>((String) executorService.schedule(endpoint::getContent, endpoint.getDelay(),
                     TimeUnit.MILLISECONDS).get(), HttpStatus.OK);
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Erreur lors de la récupération du endpoint {}", endpoint.getUri(), e);

@@ -20,3 +20,10 @@ L'application est déployée sur le cloud Heroku à cette adresse : [http://fra.
 * Spring DATA JPA
 * PostgreSQL
 * Heroku
+
+## ROADMAP
+
+* Documentation JSON
+* Découpage en client / projet
+* Authentification à l'aide de ticket
+* Gestion de droits utilisateurs
