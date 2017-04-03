@@ -54,6 +54,17 @@ public class FakeRestApiConfig extends SpringBootServletInitializer implements E
      */
     public static void main(String[] args) {
         LOG.debug("Démarrage de l'application en mode 'embedded'");
+        ClassLoader loader = FakeRestApiConfig.class.getClassLoader();
+        LOG.debug("Loaded location :" + loader.getResource("com/github/jntakpe/fra/config/FakeRestApiConfig.class").toString());
+        LOG.debug("Loaded location :" + loader.getResource("org/postgresql/Driver.class").toString());
+        URI dbUri = null;
+		try {
+			dbUri = new URI(System.getenv("DATABASE_URL"));
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        LOG.debug("dbURI : " + dbUri != null ? dbUri.toString() : "NULL");
         new SpringApplication(FakeRestApiConfig.class).run(args);
     }
 
@@ -66,12 +77,21 @@ public class FakeRestApiConfig extends SpringBootServletInitializer implements E
     @Bean
     @Profile(Constants.PROD_PROFILE)
     public HikariDataSource hikariDataSource() throws URISyntaxException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+        //URI dbUri = new URI(System.getenv("DATABASE_URL"));
+        //LOG.debug("dbURI : " + dbUri != null ? dbUri.toString() : "NULL");
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath());
-        config.setUsername(dbUri.getUserInfo().split(":")[0]);
-        config.setPassword(dbUri.getUserInfo().split(":")[1]);
-        config.setDriverClassName("org.postgresql.Driver");
+        String url = System.getenv("DATABASE_URL");
+        LOG.debug("Build url : " + url);
+        config.setJdbcUrl(url);
+        String username = System.getenv("DATABASE_USER");
+        LOG.debug("Username : " + username);
+        config.setUsername(username);
+        String password = System.getenv("DATABASE_PASS");
+        LOG.debug("Password : " + password);
+        config.setPassword(password);
+        String driver = System.getenv("DATABASE_DRIVER");
+        LOG.debug("driver : " + driver);
+        config.setDriverClassName(driver); // "org.postgresql.Driver"
         return new HikariDataSource(config);
     }
 

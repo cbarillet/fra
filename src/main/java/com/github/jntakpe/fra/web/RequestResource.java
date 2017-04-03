@@ -26,12 +26,12 @@ public class RequestResource {
         this.requestService = requestService;
     }
 
-    @RequestMapping(value = "/request", method = RequestMethod.GET)
+    @RequestMapping(value = "/request", method = RequestMethod.GET, produces={"application/json"})
     public List<Request> list() {
         return requestService.findAll();
     }
 
-    @RequestMapping(value = "/request", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/request", method = RequestMethod.DELETE, produces={"application/json"})
     public ResponseEntity<String> clean() {
         requestService.clean();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

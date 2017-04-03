@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,15 +83,17 @@ public class RestEndpointService {
      */
     public ResponseEntity<String> delayFindMatchingEndpoint(String uri, String method, Map<String, String> params) {
         Optional<RestEndpoint> matchingEndpoint = findMatchingEndpoint(uri, method, params);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
         if (matchingEndpoint.isPresent()) {
             RestEndpoint endpoint = matchingEndpoint.get();
             if (endpoint.getDelay() != null && endpoint.getDelay() > 0) {
-                return applyDelay(endpoint);
+                return applyDelay(endpoint, headers);
             } else {
-                return new ResponseEntity<>(endpoint.getContent(), HttpStatus.OK);
+                return new ResponseEntity<>(endpoint.getContent(), headers, HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -170,11 +174,12 @@ public class RestEndpointService {
         return REST_PREFIX + uri;
     }
 
-    private ResponseEntity<String> applyDelay(RestEndpoint endpoint) {
+    private ResponseEntity<String> applyDelay(RestEndpoint endpoint, HttpHeaders headers) {
         try {
+        	
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
             return new ResponseEntity<>((String) executorService.schedule(endpoint::getContent, endpoint.getDelay(),
-                    TimeUnit.MILLISECONDS).get(), HttpStatus.OK);
+                    TimeUnit.MILLISECONDS).get(), headers, HttpStatus.OK);
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Erreur lors de la récupération du endpoint {}", endpoint.getUri(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

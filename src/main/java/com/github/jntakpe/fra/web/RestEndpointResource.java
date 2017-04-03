@@ -32,12 +32,12 @@ public class RestEndpointResource {
         return restEndpointService.findAll();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces={"application/json"})
     public RestEndpoint get(@PathVariable Long id) {
         return restEndpointService.findOne(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces={"application/json"})
     public ResponseEntity<RestEndpoint> create(@Valid @RequestBody RestEndpoint restEndpoint) {
         if (restEndpointService.isAvailable(restEndpoint)) {
             return new ResponseEntity<>(restEndpointService.save(restEndpoint), HttpStatus.OK);
@@ -45,7 +45,7 @@ public class RestEndpointResource {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces={"application/json"})
     public ResponseEntity<RestEndpoint> update(@PathVariable Long id, @Valid @RequestBody RestEndpoint restEndpoint) {
         if (restEndpointService.isAvailable(restEndpoint)) {
             return new ResponseEntity<>(restEndpointService.save(restEndpoint), HttpStatus.OK);
@@ -53,7 +53,7 @@ public class RestEndpointResource {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces={"application/json"})
     public ResponseEntity<String> delete(@PathVariable Long id) {
         restEndpointService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
